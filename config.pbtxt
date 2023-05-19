@@ -1,0 +1,79 @@
+name: "normalizer"
+backend: "python"
+max_batch_size: 0
+dynamic_batching {
+  max_queue_delay_microseconds: 5000000
+}
+version_policy {
+  latest {
+    num_versions: 1
+  }
+}
+optimization {
+  graph {
+    level: 1
+  }
+}
+instance_group [
+  {
+    kind: KIND_CPU
+  }
+]
+parameters [
+  {
+    key: "number_of_words_in_phrase"
+    value {
+      string_value: "22"
+    }
+  },
+  {
+    key: "number_of_lines_in_phrase"
+    value {
+      string_value: "2"
+    }
+  },
+  {
+    key: "number_of_chars_in_line"
+    value {
+      string_value: "36"
+    }
+  },
+  {
+    key: "number_of_seconds_max_of_phrase"
+    value {
+      string_value: "7.0"
+    }
+  },
+  {
+    key: "number_of_seconds_min_of_phrase"
+    value {
+      string_value: "0.35"
+    }
+  },
+  {
+    key: "gap_in_seconds_between_phrases"
+    value {
+      string_value: "0.15"
+    }
+  },
+  {
+    key: "enhance_text"
+    value {
+      string_value: "1"
+    }
+  }
+]
+input [
+  {
+    name: "json__0"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+output [
+  {
+    name: "json__0"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
