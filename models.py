@@ -7,13 +7,13 @@ from pprint import pprint
 from protobuf_to_dict import protobuf_to_dict, dict_to_protobuf
 
 
-def get_words(input_data: str):
-    in_data = json.load(open(input_data, 'r'))
-    words = []
-    for i in range(len(in_data)):
-        words.append(in_data[i].get('result'))
-    words = list(it.chain.from_iterable(words))
-    yield words
+# def get_words(input_data: str):
+#     in_data = json.load(open(input_data, 'r'))
+#     words = []
+#     for i in range(len(in_data)):
+#         words.append(in_data[i].get('result'))
+#     words = list(it.chain.from_iterable(words))
+#     yield words
 
 
 def chunked(sp, n):

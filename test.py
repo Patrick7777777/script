@@ -1,54 +1,111 @@
 import itertools as it
 from pprint import pprint
+import json
 
 
-datas = [{'1'}, {'2'}, {'3'}, {'4'}, {'5'}, {'6'}, {'7'}, {'8'}, {'9'}, {'10'}, {'11'}, {'12'}, {'13'}, {'14'}]
-# l_out = []
-l_in = []
-length = 3
-start = 0
+number_of_chars_in_line = 100
+number_of_words_in_phrase = 4
+num_seconds_max = 100
+gap_between_sec = 0.15
 
 
-# def chunked(sp, n):
-#     s = 0
-#     chunk = []
-#     for i in range(len(sp)):
-#         if bool(sp[s:s+n]):
-#             # chunk.append(sp[s:s+n])
-#             # yield chunk
-#             chunk.append(sp[s:s+n])
-#         # yield chunk
-#         s += n
-#     yield chunk
-#     return
-
-def chunked(sp, s, n):
-    chunk = []
-
-    if bool(sp[s:s+n]):
-        # chunk.append(sp[s:s+n])
-        # yield chunk
-        chunk.append(sp[s:s+n])
-    # yield chunk
-    s += n
-    # print(s)
-    return chunk
+def get_words(input_data: str):
+    in_data = json.load(open(input_data, 'r'))
+    words = []
+    for c in range(len(in_data)):
+        words.append(in_data[c].get('result'))
+    words = list(it.chain.from_iterable(words))
+    yield words
 
 
-# pprint(chunked(datas, 1, 3))
-
-l_out = it.islice(datas, 0, 3)
-print(list(l_out))
+datas = next(get_words('test_1.json'))
+l_in = datas
 
 
-# for k in range(len(datas)):
-#     # print(datas[k])
-#     print(chunked(list(datas[k]), 4).__next__())
-#     # print(datas[k])
+def get_seconds_chunks(sp, num_seconds):
+    duration = 0
+    if sp[0:1]:
+        duration = sp[0].get('start')
+    prev_idx = 0
+    chunks = []
+    for i in range(len(sp)):
+        start_time = 0
+        end_time = sp[i].get('end')
+        if i > 0:
+            start_time = sp[i-1].get('end')
+            end_time = sp[i].get('end')
+        duration += end_time - start_time
+        if duration >= num_seconds:
+            chunk, prev_idx = i - prev_idx, i
+            if chunk > 0:
+                chunks.append(chunk)
+                # break
+            duration = 0
+    return chunks
 
 
-# print(chunked(datas, 4))
+def get_letters_chunks(sp, num_of_chars):
+    length = 0
+    if sp[0:1]:
+        length = len(sp[0].get('word'))
+    prev_idx = 0
+    chunks = []
+    for i in range(1, len(sp)):
+        length += len(sp[i].get('word'))
+        if length > num_of_chars - len(sp[i]):
+            chunk, prev_idx = i - prev_idx, i
+            chunks.append(chunk)
+            length = len(sp[i].get('word'))
+    return chunks
+
+
+def chunked(sp, ch: list):
+    out = []
+    for n in ch:
+        temp, sp = sp[:n], sp[n:]
+        out.append(temp)
+    out.append(sp)
+    return out
+
+
+def normalize(sp):
+    inp = sp
+    out = []
+    for i in range(len(sp)):
+        seconds = get_seconds_chunks(inp, num_seconds_max)
+        letters = get_letters_chunks(inp, number_of_chars_in_line)
+        print(seconds[0:1], letters[0:1], number_of_words_in_phrase)
+        minimum = [min([*seconds[0:1], *letters[0:1], number_of_words_in_phrase])]
+        print(minimum)
+        temp = chunked(inp, minimum[0:1])
+        ch = [*temp[0:1]]
+        if bool(temp[1:]):
+            out.append(ch[0])
+            inp = temp[1]
+    pprint(out)
+    return out
+
+
+normalize(l_in)
 
 
 
-    # l_out = it.filterfalse(lambda i : l_in.append(), datas)
+
+# print('letters', letters)
+
+
+# seconds = get_seconds_chunks(l_in, num_seconds_max)
+# l_out = chunked(l_in, seconds)
+# pprint(l_out)
+
+
+
+
+
+
+
+
+
+
+
+
