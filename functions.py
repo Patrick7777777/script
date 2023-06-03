@@ -3,10 +3,10 @@ from pprint import pprint
 import json
 
 
-number_of_chars_in_line = 100
-number_of_words_in_phrase = 4
-num_seconds_max = 100
-gap_between_sec = 0.15
+number_of_chars_in_line = 15
+number_of_words_in_phrase = 15
+num_seconds_max = 30
+gap_between_sec = 10
 
 
 def get_words(input_data: str):
@@ -18,7 +18,7 @@ def get_words(input_data: str):
     yield words
 
 
-datas = next(get_words('test_1.json'))
+datas = next(get_words('test.json'))
 l_in = datas
 
 
@@ -39,9 +39,8 @@ def get_seconds_chunks(sp, num_seconds):
             chunk, prev_idx = i - prev_idx, i
             if chunk > 0:
                 chunks.append(chunk)
-                # break
             duration = 0
-    return chunks
+    yield chunks
 
 
 def get_letters_chunks(sp, num_of_chars):
@@ -56,7 +55,7 @@ def get_letters_chunks(sp, num_of_chars):
             chunk, prev_idx = i - prev_idx, i
             chunks.append(chunk)
             length = len(sp[i].get('word'))
-    return chunks
+    yield chunks
 
 
 def chunked(sp, ch: list):
@@ -65,35 +64,44 @@ def chunked(sp, ch: list):
         temp, sp = sp[:n], sp[n:]
         out.append(temp)
     out.append(sp)
-    return out
+    yield out
 
 
 def normalize(sp):
     inp = sp
     out = []
     for i in range(len(sp)):
-        seconds = get_seconds_chunks(inp, num_seconds_max)
-        letters = get_letters_chunks(inp, number_of_chars_in_line)
-        print(seconds[0:1], letters[0:1], number_of_words_in_phrase)
+        seconds = next(get_seconds_chunks(inp, num_seconds_max))
+        letters = next(get_letters_chunks(inp, number_of_chars_in_line))
         minimum = [min([*seconds[0:1], *letters[0:1], number_of_words_in_phrase])]
-        print(minimum)
-        temp = chunked(inp, minimum[0:1])
+        temp = next(chunked(inp, minimum[0:1]))
         ch = [*temp[0:1]]
-        if bool(temp[1:]):
+        if temp[1:]:
             out.append(ch[0])
             inp = temp[1]
-    pprint(out)
+    yield [v for v in out if v]
+
+
+def validation(sp, skip: float):
+    out = []
+    gap = 0
+    for i in range(len(sp)):
+        text = ' '.join([w.get('word') for w in it.chain(sp[i])])
+        out.append({'result': sp[i], 'text': text})
+        for j in range(len(sp[i])):
+            sp[i][j]['end'] += gap
+            sp[i][j]['start'] += gap
+        gap += skip
     return out
 
 
-normalize(l_in)
+pprint(validation(next(normalize(l_in)), gap_between_sec))
+
+with open('output.txt', 'w') as outfile:
+    json.dump(validation(next(normalize(l_in)), gap_between_sec), outfile, ensure_ascii=False, indent=4)
 
 
-
-
-# print('letters', letters)
-
-
+# normalize(l_in)
 # seconds = get_seconds_chunks(l_in, num_seconds_max)
 # l_out = chunked(l_in, seconds)
 # pprint(l_out)
