@@ -3,9 +3,9 @@ from pprint import pprint
 import json
 
 
-number_of_chars_in_line = 15
-number_of_words_in_phrase = 30
-num_seconds_max = 2
+number_of_chars_in_line = 3
+number_of_words_in_phrase = 50
+num_seconds_max = 10
 gap_between_sec = 0.15
 
 
@@ -39,7 +39,8 @@ def get_seconds_chunks(sp, num_seconds):
             chunk, prev_idx = i - prev_idx, i
             if chunk > 0:
                 chunks.append(chunk)
-            break
+                break
+            duration *= 0
     yield chunks
 
 
