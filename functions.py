@@ -4,9 +4,9 @@ import json
 
 
 number_of_chars_in_line = 15
-number_of_words_in_phrase = 15
-num_seconds_max = 30
-gap_between_sec = 10
+number_of_words_in_phrase = 30
+num_seconds_max = 2
+gap_between_sec = 0.15
 
 
 def get_words(input_data: str):
@@ -18,7 +18,7 @@ def get_words(input_data: str):
     yield words
 
 
-datas = next(get_words('test.json'))
+datas = next(get_words('example.json'))
 l_in = datas
 
 
@@ -39,7 +39,7 @@ def get_seconds_chunks(sp, num_seconds):
             chunk, prev_idx = i - prev_idx, i
             if chunk > 0:
                 chunks.append(chunk)
-            duration = 0
+            break
     yield chunks
 
 
@@ -51,10 +51,10 @@ def get_letters_chunks(sp, num_of_chars):
     chunks = []
     for i in range(1, len(sp)):
         length += len(sp[i].get('word'))
-        if length > num_of_chars - len(sp[i]):
+        if length > num_of_chars:
             chunk, prev_idx = i - prev_idx, i
             chunks.append(chunk)
-            length = len(sp[i].get('word'))
+            break
     yield chunks
 
 
@@ -97,7 +97,7 @@ def validation(sp, skip: float):
 
 pprint(validation(next(normalize(l_in)), gap_between_sec))
 
-with open('output.txt', 'w') as outfile:
+with open('output.json', 'w') as outfile:
     json.dump(validation(next(normalize(l_in)), gap_between_sec), outfile, ensure_ascii=False, indent=4)
 
 
