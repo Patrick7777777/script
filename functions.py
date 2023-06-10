@@ -2,11 +2,7 @@ import itertools as it
 from pprint import pprint
 import json
 
-
-number_of_chars_in_line = 3
-number_of_words_in_phrase = 50
-num_seconds_max = 10
-gap_between_sec = 0.15
+from config import num_seconds_max, number_of_chars_in_line, number_of_words_in_phrase, gap_between_sec
 
 
 def get_words(input_data: str):
@@ -18,8 +14,8 @@ def get_words(input_data: str):
     yield words
 
 
-datas = next(get_words('example.json'))
-l_in = datas
+# datas = next(get_words('example.json'))
+# l_in = datas
 
 
 def get_seconds_chunks(sp, num_seconds):
@@ -96,10 +92,9 @@ def validation(sp, skip: float):
     return out
 
 
-pprint(validation(next(normalize(l_in)), gap_between_sec))
-
-with open('output.json', 'w') as outfile:
-    json.dump(validation(next(normalize(l_in)), gap_between_sec), outfile, ensure_ascii=False, indent=4)
+# pprint(validation(next(normalize(l_in)), gap_between_sec))
+# with open('output.json', 'w') as outfile:
+#     json.dump(validation(next(normalize(l_in)), gap_between_sec), outfile, ensure_ascii=False, indent=4)
 
 
 # normalize(l_in)
