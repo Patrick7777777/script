@@ -2,7 +2,7 @@ import itertools as it
 from pprint import pprint
 import json
 
-from config import num_seconds_max, number_of_chars_in_line, number_of_words_in_phrase, gap_between_sec
+# from config import num_seconds_max, number_of_chars_in_line, number_of_words_in_phrase, gap_between_sec
 
 
 def get_words(input_data: str):
@@ -12,10 +12,6 @@ def get_words(input_data: str):
         words.append(in_data[c].get('result'))
     words = list(it.chain.from_iterable(words))
     yield words
-
-
-# datas = next(get_words('example.json'))
-# l_in = datas
 
 
 def get_seconds_chunks(sp, num_seconds):
@@ -64,13 +60,13 @@ def chunked(sp, ch: list):
     yield out
 
 
-def normalize(sp):
+def normalize(sp, num_chars, num_sec_max, num_words):
     inp = sp
     out = []
     for i in range(len(sp)):
-        seconds = next(get_seconds_chunks(inp, num_seconds_max))
-        letters = next(get_letters_chunks(inp, number_of_chars_in_line))
-        minimum = [min([*seconds[0:1], *letters[0:1], number_of_words_in_phrase])]
+        seconds = next(get_seconds_chunks(inp, num_sec_max))
+        letters = next(get_letters_chunks(inp, num_chars))
+        minimum = [min([*seconds[0:1], *letters[0:1], num_words])]
         temp = next(chunked(inp, minimum[0:1]))
         ch = [*temp[0:1]]
         if temp[1:]:
@@ -92,7 +88,7 @@ def validation(sp, skip: float):
     return out
 
 
-# pprint(validation(next(normalize(l_in)), gap_between_sec))
+# pprint(validation(next(normalize(l_in, number_of_chars_in_line, num_seconds_max)), gap_between_sec))
 # with open('output.json', 'w') as outfile:
 #     json.dump(validation(next(normalize(l_in)), gap_between_sec), outfile, ensure_ascii=False, indent=4)
 
