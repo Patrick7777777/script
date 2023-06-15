@@ -1,6 +1,5 @@
 import pytest
 import json
-
 from functions import validation, normalize
 
 
@@ -18,7 +17,7 @@ from functions import validation, normalize
         # words
         (40, 40, 1, 0)
     ])
-def test_validation_one_word(num_chars, time, num_words, gap, words):
+def test_validation_one_word(num_chars, time, num_words, gap, words, generate_expected):
     result = validation(next(normalize(words, num_chars, time, num_words)), gap)
     assert result == json.load(open('tests/src/test_1_expected.json', 'r'))
 
@@ -33,7 +32,7 @@ def test_validation_one_word(num_chars, time, num_words, gap, words):
         # words
         (40, 40, 2, 0)
     ])
-def test_validation_two_words(num_chars, time, num_words, gap, words):
+def test_validation_two_words(num_chars, time, num_words, gap, words, generate_expected):
     result = validation(next(normalize(words, num_chars, time, num_words)), gap)
     assert result == json.load(open('tests/src/test_2_expected.json', 'r'))
 
@@ -48,7 +47,7 @@ def test_validation_two_words(num_chars, time, num_words, gap, words):
         # words
         (40, 40, 3, 0)
     ])
-def test_validation_three_words(num_chars, time, num_words, gap, words):
+def test_validation_three_words(num_chars, time, num_words, gap, words, generate_expected):
     result = validation(next(normalize(words, num_chars, time, num_words)), gap)
     assert result == json.load(open('tests/src/test_3_expected.json', 'r'))
 
@@ -63,7 +62,7 @@ def test_validation_three_words(num_chars, time, num_words, gap, words):
         # words
         (40, 40, 4, 0)
     ])
-def test_validation_four_words(num_chars, time, num_words, gap, words):
+def test_validation_four_words(num_chars, time, num_words, gap, words, generate_expected):
     result = validation(next(normalize(words, num_chars, time, num_words)), gap)
     assert result == json.load(open('tests/src/test_4_expected.json', 'r'))
 
