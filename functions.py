@@ -1,5 +1,4 @@
 import itertools as it
-from pprint import pprint
 import json
 
 # from config import num_seconds_max, number_of_chars_in_line, number_of_words_in_phrase, gap_between_sec
